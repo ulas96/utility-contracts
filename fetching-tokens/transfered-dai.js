@@ -20,12 +20,25 @@ async function totalDaiTransferred(fromBlock, toBlock) {
         topics
     });
 
-
-    console.log(logs[0]);
-    // take a look at the first log in the response
-    // console.log(logs[0]);
-
-    // <-- TODO #2: return the total dai transferred during this timeframe
+    return logs.map((x) => BigInt(x.data)).reduce((p, c) => p + c);
 }
 
-module.exports = totalDaiTransferred;
+async function totalErc20Transfers(fromBlock, toBlock) {
+    const res = await alchemy.core.getAssetTransfers({
+        fromBlock,
+        toBlock,
+        fromAddress: "0x28c6c06298d514db089934071355e5743bf21d60",
+        category: ["erc20"]
+    });
+    console.log(res.transfers.length);
+    return res.transfers.length;
+
+}
+
+totalErc20Transfers(0x0, 0xc2f9ad).catch(
+    (error) => {
+        console.error(error);
+        process.exit(1);
+    }
+)
+//module.exports = totalDaiTransferred;
